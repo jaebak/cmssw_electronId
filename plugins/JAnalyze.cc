@@ -39,13 +39,16 @@ class MiniAnalyzer : public edm::EDAnalyzer {
 MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig):
     electronViewToken_(consumes<edm::View<pat::Electron> >(iConfig.getParameter<edm::InputTag>("electrons")))
 {
+    // Strings for working points to use
     std::vector<std::string> vwp = {
       "egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-veto",
       "egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-loose",
       "egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-medium",
       "egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-tight",
     };
+    // There will be 4 working points
     electron_nWP_ = vwp.size();
+    // Add ValueMaps from the VIDElectronIDProducer
     for (auto const& wp : vwp) {
       electron_bitmaps_.push_back(consumes<edm::ValueMap<unsigned int>>(edm::InputTag(wp + std::string("Bitmap"))));
       electron_cutflows_.push_back(consumes<edm::ValueMap<vid::CutFlowResult>>(edm::InputTag(wp)));
